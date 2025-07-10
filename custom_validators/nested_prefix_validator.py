@@ -8,7 +8,7 @@ class NoNestedPrefixesValidator(DataComplianceRule):
     model = "ipam.prefix"
     enforce = True
 
-    def audit(self, obj):
+    def audit(self):
         # Skip validation on delete
         if obj._state.adding is False and obj.present_in_database is False:
             return

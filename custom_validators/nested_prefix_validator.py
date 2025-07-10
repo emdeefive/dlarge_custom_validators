@@ -10,16 +10,16 @@ class NoNestedPrefixesValidator(DataComplianceRule):
 
     def audit(self):
         # Skip validation on delete
-        if obj._state.adding is False and obj.present_in_database is False:
+        if self.context["object"]._state.adding is False and self.context["object"].present_in_database is False:
             return
 
         # Find any prefixes that contain this one or are contained by this one
         nested_prefixes = Prefix.objects.filter(
-            prefix__net_contains_or_equals=obj.prefix
-        ).exclude(pk=obj.pk).filter(type="network")
+            prefix__net_contains_or_equals=self.context["object"].prefix
+        ).exclude(pk=self.context["object"].pk).filter(type="network")
         
         container_prefixes = Prefix.objects.filter(
-            prefix__net_contained=obj.prefix
+            prefix__net_contained=self.context["object"].prefix
         ).filter(type="network")
         
         if nested_prefixes.exists() or container_prefixes.exists():

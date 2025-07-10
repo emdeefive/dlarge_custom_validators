@@ -6,8 +6,9 @@ from nautobot.ipam.models import Prefix
 
 class NoNestedPrefixesValidator(DataComplianceRule):
     model = "ipam.Prefix"
-    
-    def validate(self):
+    enforce = True
+
+    def audit(self):
         obj = self.context["object"]
         
         # Skip validation on delete

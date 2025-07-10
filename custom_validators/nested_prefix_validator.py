@@ -5,7 +5,7 @@ from nautobot_data_validation_engine.custom_validators import DataComplianceRule
 from nautobot.ipam.models import Prefix
 
 class NoNestedPrefixesValidator(DataComplianceRule):
-    model = Prefix
+    model = "ipam.prefix"
     enforce = True
 
     def audit(self, obj):

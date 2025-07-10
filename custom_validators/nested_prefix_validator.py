@@ -5,21 +5,24 @@ from nautobot_data_validation_engine.custom_validators import DataComplianceRule
 from nautobot.ipam.models import Prefix
 
 class NoNestedPrefixesValidator(DataComplianceRule):
-    model = "ipam.prefix"
-    enforce = True
-
-    def audit(self):
+    model = "ipam.Prefix"
+    
+    def validate(self):
+        obj = self.context["object"]
+        
         # Skip validation on delete
-        if self.context["object"]._state.adding is False and self.context["object"].present_in_database is False:
+        if hasattr(obj, "_state") and obj._state.adding is False and obj.present_in_database is False:
             return
-
-        # Find any prefixes that contain this one or are contained by this one
+            
+        # In v2.4.4, need to use network and prefix_length instead of prefix
         nested_prefixes = Prefix.objects.filter(
-            prefix__net_contains_or_equals=self.context["object"].prefix
-        ).exclude(pk=self.context["object"].pk).filter(type="network")
+            network=obj.network,
+            prefix_length__gt=obj.prefix_length
+        ).exclude(pk=obj.pk).filter(type="network")
         
         container_prefixes = Prefix.objects.filter(
-            prefix__net_contained=self.context["object"].prefix
+            network__startswith=obj.network,
+            prefix_length__lt=obj.prefix_length
         ).filter(type="network")
         
         if nested_prefixes.exists() or container_prefixes.exists():

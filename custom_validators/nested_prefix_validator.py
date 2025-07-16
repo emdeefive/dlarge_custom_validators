@@ -32,12 +32,10 @@ class NoNestedPrefixesValidator(DataComplianceRule):
                 other_network = ipaddress.ip_network(other_cidr)
                 
                 # Check if they overlap
-                if (current_network.subnet_of(other_network) or 
-                    other_network.subnet_of(current_network)):
-                    self.fail(
+                if (current_network.subnet_of(other_network) or other_network.subnet_of(current_network)):
+                    raise ComplianceError(
                         f"Nested prefixes of type 'network' are not allowed. "
                         f"This prefix {prefix_cidr} overlaps with existing network prefix {other_cidr}."
                     )
-                    return
             except ValueError:
                 continue

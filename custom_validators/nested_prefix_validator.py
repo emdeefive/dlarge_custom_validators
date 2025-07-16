@@ -6,7 +6,7 @@ from nautobot.ipam.models import Prefix
 import ipaddress
 
 class NoNestedPrefixesValidator(DataComplianceRule):
-    model = "ipam.Prefix"
+    model = "ipam.prefix"
     enforce = True
 
     def audit(self):

@@ -22,7 +22,6 @@ class NoNestedPrefixesValidator(DataComplianceRule):
 
         overlapping_prefixes = Prefix.objects.exclude(pk=obj.pk).filter(
             type="network",
-            network__family=obj.network.family,  # Only check same IP version
         )
         
         # Optional additional filters to narrow down results before Python processing
